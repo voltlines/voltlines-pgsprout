@@ -16,8 +16,8 @@ class Pgsprout < Formula
     # libpq is keg-only; append it so a user's own psql/pg_dump (e.g. Postgres.app) still wins
     (bin/"pgsprout").write <<~SH
       #!/bin/bash
-      export PATH="$PATH:#{Formula["libpq"].opt_bin}"
-      exec "#{Formula["python@3.13"].opt_bin}/python3.13" "#{libexec}/pgsprout.py" "$@"
+      export PATH="$PATH:#{formula_opt_bin("libpq")}"
+      exec "#{formula_opt_bin("python@3.13")}/python3.13" "#{libexec}/pgsprout.py" "$@"
     SH
   end
 
