@@ -1,0 +1,32 @@
+# Two databases branched together. db1 is fully copied with PII masked; db2 keeps its
+# schema but not the rows of its large log tables.
+
+[local]
+host = "localhost"
+port = 5432
+user = "postgres"
+
+[storage]
+url = ".pgsprout/dumps"
+keep = 1
+
+[[databases]]
+name = "db1"
+source = "app_main"
+greenmask = ".pgsprout/greenmask-db1.yml"
+verify = ".pgsprout/verify-db1.sql"
+
+[[databases]]
+name = "db2"
+source = "app_events"
+exclude_table_data = ["public.event_log_*"]
+
+[run]
+migrate = [
+  ["./bin/migrate", "--database=db1"],
+  ["./bin/migrate", "--database=db2"],
+]
+
+[run.env]
+DB1_URL = "postgres://{user}@{host}:{port}/db1_{branch}"
+DB2_URL = "postgres://{user}@{host}:{port}/db2_{branch}"

@@ -1,0 +1,31 @@
+[project]
+name = "pgsprout"
+dynamic = ["version"]
+description = "Masked golden copies of Postgres, sprouted into local branches in seconds"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.12"
+authors = [{ name = "Berke Topçu", email = "unalbtopcu@gmail.com" }]
+keywords = ["postgres", "branching", "migrations", "testing", "greenmask"]
+classifiers = [
+  "Environment :: Console",
+  "Topic :: Database",
+  "Topic :: Software Development :: Testing",
+]
+
+[project.urls]
+Homepage = "https://github.com/ubxt/pgsprout"
+Issues = "https://github.com/ubxt/pgsprout/issues"
+
+[project.scripts]
+pgsprout = "pgsprout:main"
+
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+py-modules = ["pgsprout"]
+
+[tool.setuptools.dynamic]
+version = { attr = "pgsprout.__version__" }

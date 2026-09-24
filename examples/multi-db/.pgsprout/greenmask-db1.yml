@@ -1,0 +1,36 @@
+# Full data, PII masked. Emails/phones are rebuilt from the row id on reserved values
+# (@example.invalid per RFC 2606, +900... which no Turkish number starts with), so no
+# masked value can belong to a real person. Pick a reserved range for your own country.
+# storage comes from pgsprout.toml [storage] (passed to greenmask as STORAGE_* env)
+
+dump:
+  pg_dump_options:
+    jobs: 4
+    exclude-table-data:
+      - public.api_tokens          # live credentials never leave the source
+      - public.sessions
+      - public.spatial_ref_sys     # PostGIS repopulates it on CREATE EXTENSION
+
+  transformation:
+    - schema: public
+      name: users
+      transformers:
+        - name: RandomPerson
+          params:
+            gender: Any
+            engine: hash
+            columns:
+              - { name: first_name, template: "{{ .FirstName }}" }
+              - { name: last_name, template: "{{ .LastName }}" }
+        - name: Template
+          params:
+            column: email
+            template: '{{- if isNull .GetValue -}}{{- null -}}{{- else -}}user{{ .GetRawColumnValue "id" }}@example.invalid{{- end -}}'
+        - name: Template
+          params:
+            column: phone_number
+            template: '{{- if isNull .GetValue -}}{{- null -}}{{- else -}}+900{{ printf "%09d" (.GetColumnValue "id") }}{{- end -}}'
+        - name: Replace          # everyone logs in locally with the password "localtest"
+          params:
+            column: password
+            value: "pbkdf2_sha256$870000$9su138eSf4ztqWxd6i2C6d$PfU+VGkbDs4TX1JaW0SeoLuX5FPxC5pepqQh4V9slS8="
