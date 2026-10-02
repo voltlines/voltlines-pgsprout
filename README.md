@@ -44,7 +44,7 @@ pgsprout drop
 ## Install
 
 ```bash
-brew install ubxt/tap/pgsprout      # pulls greenmask and libpq too
+brew install voltlines/tap/pgsprout      # pulls greenmask and libpq too
 # or
 uv tool install pgsprout             # needs greenmask and psql/pg_dump on PATH
 ```

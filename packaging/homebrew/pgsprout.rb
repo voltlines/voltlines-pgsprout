@@ -2,8 +2,8 @@
 # sha256: curl -sL <url> | shasum -a 256
 class Pgsprout < Formula
   desc "Masked golden copies of Postgres, sprouted into local branches in seconds"
-  homepage "https://github.com/ubxt/pgsprout"
-  url "https://github.com/ubxt/pgsprout/archive/refs/tags/v0.1.0.tar.gz"
+  homepage "https://github.com/voltlines/voltlines-pgsprout"
+  url "https://github.com/voltlines/voltlines-pgsprout/archive/refs/tags/v0.1.0.tar.gz"
   sha256 "REPLACE_WITH_RELEASE_SHA256"
   license "MIT"
 

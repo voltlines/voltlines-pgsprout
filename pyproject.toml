@@ -5,7 +5,7 @@ description = "Masked golden copies of Postgres, sprouted into local branches in
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.12"
-authors = [{ name = "Berke Topçu", email = "unalbtopcu@gmail.com" }]
+authors = [{ name = "Voltlines" }]
 keywords = ["postgres", "branching", "migrations", "testing", "greenmask"]
 classifiers = [
   "Environment :: Console",
@@ -14,8 +14,8 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/ubxt/pgsprout"
-Issues = "https://github.com/ubxt/pgsprout/issues"
+Homepage = "https://github.com/voltlines/voltlines-pgsprout"
+Issues = "https://github.com/voltlines/voltlines-pgsprout/issues"
 
 [project.scripts]
 pgsprout = "pgsprout:main"
