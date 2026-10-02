@@ -62,6 +62,9 @@ sub-path.
 | `s3://bucket/prefix` (+ `region`, optional `endpoint` for MinIO/R2) | yes | yes |
 | `https://host/path` | no, read-only | fetches `<url>/<db>.tar.gz` |
 
+Override it for one run with `--storage <url>` or `PGSPROUT_STORAGE_URL`, e.g. to restore the
+production golden instead of the staging one with the same config.
+
 For https, dump to a directory, then `pgsprout pack <outdir>` writes the latest dump of each
 database as `<db>.tar.gz`; upload those anywhere static (a web server, a release, an artifact
 store). All archives are downloaded before any golden is touched, and archives that try to

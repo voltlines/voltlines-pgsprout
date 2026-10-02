@@ -42,6 +42,16 @@ class ConfigTest(unittest.TestCase):
         self.assertEqual(cfg["databases"][0]["verify"], path.parent / "v.sql")
         self.assertEqual(cfg["storage"]["url"], str(path.parent / ".pgsprout/dumps"))
 
+    def test_storage_override_order(self):
+        path = write_config(MINIMAL)
+        os.environ["PGSPROUT_STORAGE_URL"] = "s3://from-env/p"
+        try:
+            self.assertEqual(pgsprout.load_config(path)["storage"]["url"], "s3://from-env/p")
+            self.assertEqual(pgsprout.load_config(path, "s3://from-flag/p")["storage"]["url"], "s3://from-flag/p")
+        finally:
+            del os.environ["PGSPROUT_STORAGE_URL"]
+        self.assertEqual(pgsprout.load_config(path)["storage"]["kind"], "dir")
+
     def test_init_template_is_a_valid_config(self):
         pgsprout.load_config(write_config(pgsprout.CONFIG_TEMPLATE))
 

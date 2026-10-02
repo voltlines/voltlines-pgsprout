@@ -22,7 +22,7 @@ import urllib.request
 from pathlib import Path
 from urllib.parse import urlparse
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 CONFIG_NAME = "pgsprout.toml"
 LOCAL_HOSTS = {"localhost", "127.0.0.1", "::1"}
@@ -82,7 +82,8 @@ def find_config(explicit: str | None) -> Path:
     die(f"no {CONFIG_NAME} in {Path.cwd()} or any parent (run `pgsprout init` or pass --config)")
 
 
-def load_config(path: Path) -> dict:
+def load_config(path: Path, storage_url: str | None = None) -> dict:
+    """storage_url (--storage) beats $PGSPROUT_STORAGE_URL, which beats [storage] url."""
     raw = tomllib.loads(path.read_text())
     root = path.parent
     local = raw.get("local", {})
@@ -103,7 +104,9 @@ def load_config(path: Path) -> dict:
         "port": int(local.get("port", 5432)),
         "user": local.get("user", "postgres"),
         "storage": {
-            **parse_storage_url(storage.get("url", ".pgsprout/dumps"), root),
+            **parse_storage_url(
+                storage_url or os.environ.get("PGSPROUT_STORAGE_URL") or storage.get("url", ".pgsprout/dumps"), root
+            ),
             "region": storage.get("region"),
             "endpoint": storage.get("endpoint"),
         },
@@ -407,6 +410,7 @@ COMMANDS = {
 def main() -> None:
     parser = argparse.ArgumentParser(prog="pgsprout", description=__doc__.splitlines()[0])
     parser.add_argument("--config", help=f"path to {CONFIG_NAME} (default: search upwards from cwd)")
+    parser.add_argument("--storage", help="override [storage] url, e.g. s3://bucket/prefix (or $PGSPROUT_STORAGE_URL)")
     parser.add_argument("--version", action="version", version=f"pgsprout {__version__}")
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("init", help=f"write a commented {CONFIG_NAME} template")
@@ -427,7 +431,7 @@ def main() -> None:
     sub.add_parser("list", help="goldens and branches with sizes")
 
     args = parser.parse_args()
-    cfg = None if args.command == "init" else load_config(find_config(args.config))
+    cfg = None if args.command == "init" else load_config(find_config(args.config), args.storage)
     COMMANDS[args.command](cfg, args)
 
 
